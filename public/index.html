@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="簡単に日程調整ができるWebアプリ。候補日を選んでリンクを共有するだけ。">
+  <title>スケコーデ | 日程調整アプリ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="bg-effects">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+  </div>
+  <header class="header">
+    <a href="/" class="logo" id="logo-link">
+      <span class="logo-icon">📅</span>
+      <span class="logo-text">スケコーデ</span>
+    </a>
+  </header>
+  <main id="app" class="main-content"></main>
+  <footer class="footer">
+    <p>© 2026 スケコーデ — みんなの予定を、かんたんに。</p>
+  </footer>
+  <script src="/src/components/calendar.js"></script>
+  <script src="/src/components/timegrid.js"></script>
+  <script src="/src/components/heatmap.js"></script>
+  <script src="/src/components/google-calendar.js"></script>
+  <script src="/src/pages/home.js"></script>
+  <script src="/src/pages/respond.js"></script>
+  <script src="/src/pages/results.js"></script>
+  <script src="/src/main.js"></script>
+</body>
+</html>

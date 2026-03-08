@@ -1,0 +1,269 @@
+/**
+ * Home Page — Event Creation
+ */
+window.HomePage = {
+    selectedDates: [],
+    calendar: null,
+    gcalConnect: null,
+
+    render(container) {
+        container.innerHTML = `
+      <div class="animate-slide-up">
+        <h1 class="page-title">日程調整をはじめる</h1>
+        <p class="page-subtitle">候補日を選んでリンクを共有。みんなの空き時間がひと目でわかります。</p>
+
+        <div class="steps">
+          <div class="step step--active">
+            <div class="step-number">1</div>
+            <span>イベント作成</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <span>リンク共有</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <span>日程決定</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="form-group">
+            <label class="form-label" for="event-title">イベント名</label>
+            <input type="text" class="form-input" id="event-title" placeholder="例: チームミーティング" maxlength="100">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="event-desc">説明（任意）</label>
+            <textarea class="form-input" id="event-desc" placeholder="例: 来月の定例会議の日程を調整しましょう" rows="2"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="time-start">開始時刻</label>
+              <select class="form-input" id="time-start"></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="time-end">終了時刻</label>
+              <select class="form-input" id="time-end"></select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">候補日を選択</label>
+            <div id="gcal-home-container" class="mb-md"></div>
+            <div id="calendar-container"></div>
+          </div>
+
+          <div id="selected-dates-display"></div>
+
+          <div class="mt-xl">
+            <button class="btn btn-primary btn-lg" id="create-event-btn" style="width: 100%;" disabled>
+              イベントを作成する
+            </button>
+          </div>
+        </div>
+
+        <div id="share-result" style="display: none;"></div>
+      </div>
+    `;
+
+        this.initTimeSelectors();
+        this.initCalendar();
+        this.attachListeners();
+    },
+
+    initTimeSelectors() {
+        const startSelect = document.getElementById('time-start');
+        const endSelect = document.getElementById('time-end');
+
+        for (let h = 6; h <= 23; h++) {
+            for (let m = 0; m < 60; m += 30) {
+                const time = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+                startSelect.innerHTML += `<option value="${time}" ${time === '09:00' ? 'selected' : ''}>${time}</option>`;
+                endSelect.innerHTML += `<option value="${time}" ${time === '21:00' ? 'selected' : ''}>${time}</option>`;
+            }
+        }
+    },
+
+    initCalendar() {
+        const calContainer = document.getElementById('calendar-container');
+        this.calendar = new Calendar(calContainer, {
+            onSelect: (dates) => {
+                this.selectedDates = dates;
+                this.updateSelectedDatesDisplay();
+                this.updateCreateButton();
+                // Googleカレンダーの日付も更新
+                if (this.gcalConnect) {
+                    const timeStart = document.getElementById('time-start').value;
+                    const timeEnd = document.getElementById('time-end').value;
+                    this.gcalConnect.updateDates(dates, timeStart, timeEnd);
+                }
+            }
+        });
+
+        // Initialize Google Calendar connect for home page
+        this.initGoogleCalendar();
+    },
+
+    initGoogleCalendar() {
+        const gcalContainer = document.getElementById('gcal-home-container');
+        const timeStart = document.getElementById('time-start').value;
+        const timeEnd = document.getElementById('time-end').value;
+
+        // 現在の月の日付を生成（カレンダー表示用）
+        const today = new Date();
+        const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+        const daysInNextMonth = new Date(today.getFullYear(), today.getMonth() + 2, 0).getDate();
+        const calDates = [];
+        for (let d = today.getDate(); d <= daysInMonth; d++) {
+            const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            calDates.push(dateStr);
+        }
+        // 来月分も追加
+        const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+        for (let d = 1; d <= daysInNextMonth; d++) {
+            const dateStr = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            calDates.push(dateStr);
+        }
+
+        this.gcalConnect = new GoogleCalendarConnect(gcalContainer, {
+            dates: calDates,
+            timeStart,
+            timeEnd,
+            onBusyDatesChange: (busyDates) => {
+                if (this.calendar) {
+                    this.calendar.setBusyDates(busyDates);
+                }
+            }
+        });
+    },
+
+    updateSelectedDatesDisplay() {
+        const display = document.getElementById('selected-dates-display');
+        if (this.selectedDates.length === 0) {
+            display.innerHTML = '';
+            return;
+        }
+
+        const chips = this.selectedDates.map(dateStr => {
+            const date = new Date(dateStr + 'T00:00:00');
+            const m = date.getMonth() + 1;
+            const d = date.getDate();
+            const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+            const dayName = dayNames[date.getDay()];
+            return `
+        <span class="date-chip">
+          ${m}/${d}(${dayName})
+          <button class="date-chip-remove" data-date="${dateStr}" type="button">✕</button>
+        </span>
+      `;
+        }).join('');
+
+        display.innerHTML = `
+      <div class="mt-md">
+        <span class="form-label" style="display: inline;">選択中: ${this.selectedDates.length}日</span>
+        <div class="selected-dates-list">${chips}</div>
+      </div>
+    `;
+
+        // Remove button listeners
+        display.querySelectorAll('.date-chip-remove').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const dateStr = btn.dataset.date;
+                this.calendar.toggleDate(dateStr);
+            });
+        });
+    },
+
+    updateCreateButton() {
+        const btn = document.getElementById('create-event-btn');
+        const title = document.getElementById('event-title').value.trim();
+        btn.disabled = !title || this.selectedDates.length === 0;
+    },
+
+    attachListeners() {
+        document.getElementById('event-title').addEventListener('input', () => this.updateCreateButton());
+        document.getElementById('create-event-btn').addEventListener('click', () => this.createEvent());
+    },
+
+    async createEvent() {
+        const btn = document.getElementById('create-event-btn');
+        btn.disabled = true;
+        btn.textContent = '作成中...';
+
+        const title = document.getElementById('event-title').value.trim();
+        const description = document.getElementById('event-desc').value.trim();
+        const timeStart = document.getElementById('time-start').value;
+        const timeEnd = document.getElementById('time-end').value;
+
+        try {
+            const res = await fetch('/api/events', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    dates: this.selectedDates,
+                    timeStart,
+                    timeEnd
+                })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                this.showShareLink(data.id);
+            } else {
+                alert(data.error || 'エラーが発生しました');
+                btn.disabled = false;
+                btn.textContent = 'イベントを作成する';
+            }
+        } catch (err) {
+            alert('通信エラーが発生しました');
+            btn.disabled = false;
+            btn.textContent = 'イベントを作成する';
+        }
+    },
+
+    showShareLink(eventId) {
+        const shareUrl = `${window.location.origin}/#/event/${eventId}`;
+        const resultsUrl = `${window.location.origin}/#/event/${eventId}/results`;
+
+        const shareResult = document.getElementById('share-result');
+        shareResult.style.display = 'block';
+        shareResult.innerHTML = `
+      <div class="card card-glow share-section">
+        <h2 class="section-title" style="color: var(--success);">✅ イベントを作成しました！</h2>
+        <p style="color: var(--text-secondary);">以下のリンクを参加者に共有してください。</p>
+
+        <div class="mt-lg">
+          <label class="form-label">回答用リンク</label>
+          <div class="share-link-box">
+            <input type="text" class="share-link-input" id="share-url" value="${shareUrl}" readonly>
+            <button class="btn btn-primary" id="copy-share-btn" type="button">コピー</button>
+          </div>
+        </div>
+
+        <div class="mt-lg flex-center gap-md" style="flex-wrap: wrap;">
+          <a href="#/event/${eventId}" class="btn btn-secondary">回答ページを開く →</a>
+          <a href="#/event/${eventId}/results" class="btn btn-secondary">結果を見る →</a>
+        </div>
+      </div>
+    `;
+
+        document.getElementById('copy-share-btn').addEventListener('click', () => {
+            const input = document.getElementById('share-url');
+            input.select();
+            navigator.clipboard.writeText(input.value).then(() => {
+                const btn = document.getElementById('copy-share-btn');
+                btn.textContent = 'コピー済み ✓';
+                setTimeout(() => { btn.textContent = 'コピー'; }, 2000);
+            });
+        });
+
+        shareResult.scrollIntoView({ behavior: 'smooth' });
+    }
+};
