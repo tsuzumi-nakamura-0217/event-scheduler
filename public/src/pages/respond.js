@@ -4,7 +4,6 @@
 window.RespondPage = {
   event: null,
   timeGrid: null,
-  gcalConnect: null,
   selectedSlots: [],
   editingName: null, // name of respondent being edited, null = new
 
@@ -105,8 +104,12 @@ window.RespondPage = {
             <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-md);">
               ドラッグで複数のスロットを一括選択できます
             </p>
-            <div id="gcal-respond-container" class="mb-md"></div>
             <div id="respond-timegrid"></div>
+          </div>
+
+          <div class="form-group mt-md">
+            <label class="form-label" for="respondent-comment">コメント・備考（任意）</label>
+            <textarea class="form-input" id="respondent-comment" placeholder="例: 15時以降だと助かります" rows="2" maxlength="500"></textarea>
           </div>
 
           <button class="btn btn-primary btn-lg mt-lg" id="submit-response-btn" style="width: 100%;" disabled>
@@ -163,6 +166,24 @@ window.RespondPage = {
             </p>
             <div id="results-heatmap"></div>
           </div>
+
+          ${(() => {
+            const comments = ev.responses.filter(r => r.comment && r.comment.trim());
+            if (comments.length === 0) return '';
+            return `
+              <div class="card mb-lg">
+                <h2 class="section-title"><i data-lucide="message-circle"></i> コメント</h2>
+                <div class="comment-list">
+                  ${comments.map(r => `
+                    <div class="comment-item">
+                      <div class="comment-author">${this.escapeHtml(r.name)}</div>
+                      <div class="comment-text">${this.escapeHtml(r.comment)}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          })()}
         ` : `
           <div class="card mb-lg">
             <div class="no-response-message">
@@ -206,23 +227,6 @@ window.RespondPage = {
           this.updateSubmitButton();
         }
       });
-
-      // Initialize Google Calendar connect
-      const gcalContainer = document.getElementById('gcal-respond-container');
-      if (gcalContainer) {
-        this.gcalConnect = new GoogleCalendarConnect(gcalContainer, {
-          dates: ev.dates,
-          timeStart: ev.timeStart,
-          timeEnd: ev.timeEnd,
-          onBusySlotsChange: (busySlots) => {
-            if (this.timeGrid && this.timeGrid.setBlockedSlots) {
-              this.timeGrid.setBlockedSlots(busySlots);
-              this.selectedSlots = this.timeGrid.getSelectedSlots();
-              this.updateSubmitButton();
-            }
-          }
-        });
-      }
 
       // Name input listener
       document.getElementById('respondent-name').addEventListener('input', () => this.updateSubmitButton());
@@ -278,6 +282,12 @@ window.RespondPage = {
     nameInput.readOnly = true;
     nameInput.style.opacity = '0.7';
 
+    // Restore comment
+    const commentInput = document.getElementById('respondent-comment');
+    if (commentInput) {
+      commentInput.value = response.comment || '';
+    }
+
     // Highlight active chip
     document.querySelectorAll('.respondent-select-chip').forEach(c => c.classList.remove('respondent-select-chip--active'));
     const activeChip = document.querySelector(`.respondent-select-chip[data-name="${CSS.escape(name)}"]`);
@@ -306,6 +316,12 @@ window.RespondPage = {
     nameInput.readOnly = false;
     nameInput.style.opacity = '1';
     nameInput.focus();
+
+    // Clear comment
+    const commentInput = document.getElementById('respondent-comment');
+    if (commentInput) {
+      commentInput.value = '';
+    }
 
     // Clear chip highlights
     document.querySelectorAll('.respondent-select-chip').forEach(c => c.classList.remove('respondent-select-chip--active'));
@@ -336,12 +352,13 @@ window.RespondPage = {
     btn.textContent = '保存中...';
 
     const name = document.getElementById('respondent-name').value.trim();
+    const comment = document.getElementById('respondent-comment')?.value.trim() || '';
 
     try {
       const res = await fetch(`/api/events/${eventId}/respond`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, slots: this.selectedSlots })
+        body: JSON.stringify({ name, slots: this.selectedSlots, comment })
       });
 
       const data = await res.json();

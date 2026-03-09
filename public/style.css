@@ -1478,210 +1478,34 @@ select.form-input {
   }
 }
 
-/* ─── Google Calendar 連携 ─── */
+/* ─── コメント ─── */
 
-.gcal-connect-section {
-  padding: var(--space-md);
-  border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.gcal-connected {
-  background: var(--accent-secondary);
-  border-color: var(--border-accent);
-}
-
-.gcal-connect-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  background: #ffffff;
-  color: var(--text-primary);
-  border: 1px solid var(--border-subtle);
-  padding: var(--space-sm) var(--space-lg);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition-base);
-  box-shadow: var(--shadow-sm);
-}
-
-.gcal-connect-btn:hover {
-  background: rgba(66, 133, 244, 0.15);
-  border-color: rgba(66, 133, 244, 0.3);
-  transform: translateY(-1px);
-}
-
-.gcal-icon {
-  flex-shrink: 0;
-}
-
-.gcal-hint {
-  color: var(--text-muted);
-  font-size: var(--font-size-xs);
-  margin-top: var(--space-xs);
-}
-
-.gcal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-md);
-}
-
-.gcal-status {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  color: var(--text-secondary);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-}
-
-.gcal-status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #34a853;
-  box-shadow: 0 0 6px rgba(52, 168, 83, 0.5);
-}
-
-.gcal-disconnect-btn {
-  font-size: var(--font-size-xs) !important;
-  padding: 4px 10px !important;
-  background: rgba(234, 67, 53, 0.1);
-  color: #ea4335;
-  border: 1px solid rgba(234, 67, 53, 0.2);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: var(--transition-base);
-}
-
-.gcal-disconnect-btn:hover {
-  background: rgba(234, 67, 53, 0.2);
-}
-
-.gcal-calendars {
+.comment-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
 }
 
-.gcal-label {
-  color: var(--text-muted);
-  font-size: var(--font-size-xs);
+.comment-item {
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.comment-author {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--accent-light);
   margin-bottom: var(--space-xs);
 }
 
-.gcal-calendar-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: 6px var(--space-sm);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: var(--transition-fast);
+.comment-text {
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
-}
-
-.gcal-calendar-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.gcal-calendar-checkbox {
-  accent-color: var(--primary);
-  cursor: pointer;
-}
-
-.gcal-calendar-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.gcal-calendar-name {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.gcal-primary-badge {
-  font-size: 10px;
-  background: rgba(124, 58, 237, 0.2);
-  color: var(--primary-light);
-  padding: 1px 6px;
-  border-radius: 8px;
-  flex-shrink: 0;
-}
-
-.gcal-loading {
-  color: var(--text-muted);
-  font-size: var(--font-size-xs);
-  margin-top: var(--space-xs);
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.4;
-  }
-}
-
-/* カレンダーの予定ありドット */
-.calendar-day {
-  position: relative;
-}
-
-.calendar-day--busy {
-  border-color: rgba(234, 67, 53, 0.4);
-}
-
-.calendar-busy-dot {
-  position: absolute;
-  bottom: 3px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #ea4335;
-  box-shadow: 0 0 4px rgba(234, 67, 53, 0.5);
-}
-
-.calendar-day--selected .calendar-busy-dot {
-  background: #ffcdd2;
-}
-
-/* TimeGrid ブロック済みスロット */
-.timegrid-slot--blocked {
-  background: repeating-linear-gradient(-45deg,
-      rgba(234, 67, 53, 0.08),
-      rgba(234, 67, 53, 0.08) 4px,
-      rgba(234, 67, 53, 0.16) 4px,
-      rgba(234, 67, 53, 0.16) 8px) !important;
-  cursor: not-allowed !important;
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.timegrid-slot--blocked::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* Fix for Safari datetime-local inputs */

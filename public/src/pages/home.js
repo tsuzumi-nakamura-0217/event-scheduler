@@ -4,7 +4,6 @@
 window.HomePage = {
   selectedDates: [],
   calendar: null,
-  gcalConnect: null,
 
   render(container) {
     container.innerHTML = `
@@ -68,7 +67,6 @@ window.HomePage = {
 
           <div class="form-group">
             <label class="form-label">候補日を選択</label>
-            <div id="gcal-home-container" class="mb-md"></div>
             <div id="calendar-container"></div>
           </div>
 
@@ -141,48 +139,6 @@ window.HomePage = {
         this.selectedDates = dates;
         this.updateSelectedDatesDisplay();
         this.updateCreateButton();
-        // Googleカレンダーの日付も更新
-        if (this.gcalConnect) {
-          const timeStart = document.getElementById('time-start').value;
-          const timeEnd = document.getElementById('time-end').value;
-          this.gcalConnect.updateDates(dates, timeStart, timeEnd);
-        }
-      }
-    });
-
-    // Initialize Google Calendar connect for home page
-    this.initGoogleCalendar();
-  },
-
-  initGoogleCalendar() {
-    const gcalContainer = document.getElementById('gcal-home-container');
-    const timeStart = document.getElementById('time-start').value;
-    const timeEnd = document.getElementById('time-end').value;
-
-    // 現在の月の日付を生成（カレンダー表示用）
-    const today = new Date();
-    const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-    const daysInNextMonth = new Date(today.getFullYear(), today.getMonth() + 2, 0).getDate();
-    const calDates = [];
-    for (let d = today.getDate(); d <= daysInMonth; d++) {
-      const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      calDates.push(dateStr);
-    }
-    // 来月分も追加
-    const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-    for (let d = 1; d <= daysInNextMonth; d++) {
-      const dateStr = `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      calDates.push(dateStr);
-    }
-
-    this.gcalConnect = new GoogleCalendarConnect(gcalContainer, {
-      dates: calDates,
-      timeStart,
-      timeEnd,
-      onBusyDatesChange: (busyDates) => {
-        if (this.calendar) {
-          this.calendar.setBusyDates(busyDates);
-        }
       }
     });
   },
