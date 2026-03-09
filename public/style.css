@@ -60,19 +60,30 @@
   --font-size-4xl: 2.25rem;
 
   /* Spacing (8pt Grid) */
-  --space-xs: 0.5rem;   /* 8px */
-  --space-sm: 0.75rem;  /* 12px */
-  --space-md: 1rem;     /* 16px */
-  --space-lg: 1.5rem;   /* 24px */
-  --space-xl: 2rem;     /* 32px */
-  --space-2xl: 3rem;    /* 48px */
-  --space-3xl: 4rem;    /* 64px */
+  --space-xs: 0.5rem;
+  /* 8px */
+  --space-sm: 0.75rem;
+  /* 12px */
+  --space-md: 1rem;
+  /* 16px */
+  --space-lg: 1.5rem;
+  /* 24px */
+  --space-xl: 2rem;
+  /* 32px */
+  --space-2xl: 3rem;
+  /* 48px */
+  --space-3xl: 4rem;
+  /* 64px */
 
   /* Borders (Squircle) */
-  --radius-sm: 8px;     /* rounded-lg */
-  --radius-md: 12px;    /* rounded-xl */
-  --radius-lg: 16px;    /* rounded-2xl */
-  --radius-xl: 24px;    /* rounded-3xl */
+  --radius-sm: 8px;
+  /* rounded-lg */
+  --radius-md: 12px;
+  /* rounded-xl */
+  --radius-lg: 16px;
+  /* rounded-2xl */
+  --radius-xl: 24px;
+  /* rounded-3xl */
   --radius-full: 9999px;
 
   /* Shadows (Depth) */
@@ -703,13 +714,25 @@ select.form-input {
 
 .timegrid {
   display: grid;
-  gap: 3px;
+  gap: 2px 4px;
+  /* 2px vertical gap to make boundaries clearer, 4px horizontal gap */
   min-width: fit-content;
   user-select: none;
 }
 
 .timegrid-header {
   display: contents;
+}
+
+/* Set corner and time labels to sticky to keep them visible when scrolling right */
+.timegrid-corner,
+.timegrid-time-label {
+  position: sticky;
+  left: 0;
+  background-color: var(--bg-card);
+  z-index: 10;
+  box-shadow: -4px 0 0 var(--bg-card);
+  /* Hide grid content that scrolls into the left container padding */
 }
 
 .timegrid-date-label {
@@ -725,11 +748,8 @@ select.form-input {
 .timegrid-time-label {
   font-size: 10px;
   color: var(--text-muted);
-  padding-right: 8px;
+  padding-right: 12px;
   text-align: right;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   font-weight: 500;
@@ -738,7 +758,8 @@ select.form-input {
 .timegrid-slot {
   min-width: 56px;
   height: 26px;
-  border-radius: 6px;
+  border-radius: 4px;
+  /* Smaller radius for blockier, boundary-focused look */
   background: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
   cursor: pointer;
@@ -757,7 +778,7 @@ select.form-input {
 }
 
 .timegrid-slot--dragging {
-  background: rgba(124, 58, 237, 0.25) !important;
+  background: rgba(59, 130, 246, 0.25) !important;
 }
 
 /* ============================================
@@ -773,14 +794,14 @@ select.form-input {
 
 .heatmap {
   display: grid;
-  gap: 3px;
+  gap: 2px 4px;
   min-width: fit-content;
 }
 
 .heatmap-slot {
   min-width: 56px;
   height: 26px;
-  border-radius: 6px;
+  border-radius: 4px;
   border: 1px solid var(--border-subtle);
   cursor: pointer;
   transition: transform 150ms;

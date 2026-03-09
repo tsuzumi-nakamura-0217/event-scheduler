@@ -88,14 +88,14 @@ class TimeGrid {
         let html = `<div class="timegrid-container"><div class="timegrid" style="grid-template-columns: 60px repeat(${this.dates.length}, 1fr);">`;
 
         // Header row
-        html += `<div class="timegrid-date-label"></div>`;
+        html += `<div class="timegrid-date-label timegrid-corner"></div>`;
         this.dates.forEach(date => {
             html += `<div class="timegrid-date-label">${this.formatDateLabel(date)}</div>`;
         });
 
         // Time rows
         timeSlots.forEach(time => {
-            html += `<div class="timegrid-time-label">${time}</div>`;
+            html += `<div class="timegrid-time-label"><span>${time}</span></div>`;
             this.dates.forEach(date => {
                 const key = this.slotKey(date, time);
                 const selected = this.selectedSlots.has(key);

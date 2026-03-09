@@ -64,14 +64,14 @@ class Heatmap {
         let html = `<div class="heatmap-container"><div class="heatmap" style="grid-template-columns: 60px repeat(${this.dates.length}, 1fr);">`;
 
         // Header row
-        html += `<div class="timegrid-date-label"></div>`;
+        html += `<div class="timegrid-date-label timegrid-corner"></div>`;
         this.dates.forEach(date => {
             html += `<div class="timegrid-date-label">${this.formatDateLabel(date)}</div>`;
         });
 
         // Data rows
         timeSlots.forEach(time => {
-            html += `<div class="timegrid-time-label">${time}</div>`;
+            html += `<div class="timegrid-time-label"><span>${time}</span></div>`;
             this.dates.forEach(date => {
                 const key = `${date}_${time}`;
                 const count = this.slotCounts[key] || 0;
