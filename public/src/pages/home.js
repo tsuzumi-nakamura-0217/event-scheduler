@@ -280,7 +280,6 @@ window.HomePage = {
 
   showShareLink(eventId, title, deadline) {
     const shareUrl = `${window.location.origin}/#/event/${eventId}`;
-    const resultsUrl = `${window.location.origin}/#/event/${eventId}/results`;
 
     let formattedDeadline = '';
     if (deadline) {
@@ -323,8 +322,7 @@ ${shareUrl}${formattedDeadline ? `\n\n▼ 入力締切日\n${formattedDeadline}`
         </div>
 
         <div class="mt-lg flex-center gap-md" style="flex-wrap: wrap;">
-          <a href="#/event/${eventId}" class="btn btn-secondary">回答ページを開く →</a>
-          <a href="#/event/${eventId}/results" class="btn btn-secondary">結果を見る →</a>
+          <a href="#/event/${eventId}" class="btn btn-secondary">イベントページを開く →</a>
         </div>
       </div>
     `;

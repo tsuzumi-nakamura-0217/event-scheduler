@@ -10,8 +10,86 @@ class Heatmap {
         this.slotCounts = options.slotCounts || {};
         this.slotRespondents = options.slotRespondents || {};
         this.totalResponses = options.totalResponses || 0;
+        this.tooltipEl = null;
 
         this.render();
+    }
+
+    escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    buildTooltipText(date, time, count, respondents) {
+        const dateLabel = this.formatDateLabel(date);
+        if (count === 0) {
+            return `${dateLabel} ${time}〜  参加可能者なし`;
+        }
+        return `${dateLabel} ${time}〜  ${count}人 (${respondents.join(', ')})`;
+    }
+
+    showTooltip(text, event) {
+        if (!this.tooltipEl || !text) return;
+        this.tooltipEl.textContent = text;
+        this.tooltipEl.classList.add('is-visible');
+        this.positionTooltip(event);
+    }
+
+    positionTooltip(event) {
+        if (!this.tooltipEl || !this.tooltipEl.classList.contains('is-visible')) return;
+
+        const margin = 10;
+        const offsetX = 14;
+        const offsetY = 14;
+        const rect = this.tooltipEl.getBoundingClientRect();
+
+        let x = event.clientX + offsetX;
+        let y = event.clientY - rect.height - offsetY;
+
+        if (x + rect.width + margin > window.innerWidth) {
+            x = event.clientX - rect.width - offsetX;
+        }
+        if (x < margin) {
+            x = margin;
+        }
+
+        if (y < margin) {
+            y = event.clientY + offsetY;
+        }
+        if (y + rect.height + margin > window.innerHeight) {
+            y = window.innerHeight - rect.height - margin;
+        }
+
+        this.tooltipEl.style.left = `${x}px`;
+        this.tooltipEl.style.top = `${y}px`;
+    }
+
+    hideTooltip() {
+        if (!this.tooltipEl) return;
+        this.tooltipEl.classList.remove('is-visible');
+    }
+
+    bindTooltipEvents() {
+        const slots = this.container.querySelectorAll('.heatmap-slot');
+        slots.forEach((slot) => {
+            const text = slot.dataset.tooltip || '';
+            slot.addEventListener('mouseenter', (event) => this.showTooltip(text, event));
+            slot.addEventListener('mousemove', (event) => this.positionTooltip(event));
+            slot.addEventListener('mouseleave', () => this.hideTooltip());
+        });
+    }
+
+    ensureTooltipElement() {
+        if (this.tooltipEl) {
+            this.tooltipEl.remove();
+        }
+        this.tooltipEl = document.createElement('div');
+        this.tooltipEl.className = 'heatmap-tooltip';
+        document.body.appendChild(this.tooltipEl);
     }
 
     generateTimeSlots() {
@@ -52,7 +130,7 @@ class Heatmap {
         if (!this.dates.length) {
             this.container.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">📊</div>
+          <div class="empty-state-icon"><i data-lucide="bar-chart-3"></i></div>
           <p>データがありません</p>
         </div>
       `;
@@ -77,15 +155,11 @@ class Heatmap {
                 const count = this.slotCounts[key] || 0;
                 const level = this.getHeatLevel(count);
                 const respondents = this.slotRespondents[key] || [];
-
-                let tooltipText = count === 0
-                    ? '回答なし'
-                    : `${count}/${this.totalResponses}人: ${respondents.join(', ')}`;
+                                const tooltipText = this.escapeHtml(this.buildTooltipText(date, time, count, respondents));
 
                 html += `
-          <div class="heatmap-slot heatmap-slot--level-${level}" data-slot="${key}">
+                    <div class="heatmap-slot heatmap-slot--level-${level}" data-slot="${key}" data-tooltip="${tooltipText}">
             ${count > 0 ? count : ''}
-            <div class="heatmap-tooltip">${tooltipText}</div>
           </div>
         `;
             });
@@ -108,6 +182,8 @@ class Heatmap {
     `;
 
         this.container.innerHTML = html;
+        this.ensureTooltipElement();
+        this.bindTooltipEvents();
     }
 }
 

@@ -134,6 +134,27 @@ app.post('/api/events/:id/respond', (req, res) => {
   res.json({ success: true, event });
 });
 
+// API: Delete a response
+app.delete('/api/events/:id/respond/:name', (req, res) => {
+  const data = readData();
+  const event = data.events[req.params.id];
+
+  if (!event) {
+    return res.status(404).json({ error: 'イベントが見つかりません' });
+  }
+
+  const name = decodeURIComponent(req.params.name);
+  const before = event.responses.length;
+  event.responses = event.responses.filter(r => r.name !== name);
+
+  if (event.responses.length === before) {
+    return res.status(404).json({ error: '該当する回答が見つかりません' });
+  }
+
+  writeData(data);
+  res.json({ success: true, event });
+});
+
 // API: Get results
 app.get('/api/events/:id/results', (req, res) => {
   const data = readData();

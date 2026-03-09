@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="簡単に日程調整ができるWebアプリ。候補日を選んでリンクを共有するだけ。">
-  <title>スケコーデ | 日程調整アプリ</title>
+  <title>Pittari | 日程調整アプリ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -22,15 +22,18 @@
     <div class="bg-orb bg-orb-3"></div>
   </div>
   <header class="header">
-    <a href="/" class="logo" id="logo-link">
-      <span class="logo-icon">📅</span>
-      <span class="logo-text">スケコーデ</span>
-    </a>
+    <nav class="header-nav">
+      <a href="/" class="logo" id="logo-link">
+        <span class="logo-icon"><i data-lucide="calendar-days"></i></span>
+        <span class="logo-text">Pittari</span>
+      </a>
+    </nav>
   </header>
   <main id="app" class="main-content"></main>
   <footer class="footer">
-    <p>© 2026 スケコーデ — みんなの予定を、かんたんに。</p>
+    <p>© 2026 Pittari — みんなの予定を、かんたんに。</p>
   </footer>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="/src/components/calendar.js"></script>
   <script src="/src/components/timegrid.js"></script>
   <script src="/src/components/heatmap.js"></script>

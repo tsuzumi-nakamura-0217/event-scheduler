@@ -37,8 +37,9 @@
                 RespondPage.render(app, route.eventId);
                 break;
             case 'results':
-                ResultsPage.render(app, route.eventId);
-                break;
+                // Redirect old results URL to unified page
+                window.location.hash = `/event/${route.eventId}`;
+                return;
         }
     }
 

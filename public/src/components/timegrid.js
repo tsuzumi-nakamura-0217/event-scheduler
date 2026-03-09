@@ -75,7 +75,7 @@ class TimeGrid {
         if (!this.dates.length) {
             this.container.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">📅</div>
+          <div class="empty-state-icon"><i data-lucide="calendar"></i></div>
           <p>候補日を選択してください</p>
         </div>
       `;
