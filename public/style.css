@@ -5,6 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;600;700;900&display=swap');
 
 :root {
+  color-scheme: dark;
   /* Colors — Deep Space Palette */
   --bg-primary: #050810;
   --bg-secondary: #0c1022;
@@ -436,6 +437,98 @@ textarea.form-input {
   resize: vertical;
   min-height: 80px;
   line-height: 1.6;
+}
+
+/* Input with Icon */
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon .form-input {
+  padding-right: 44px;
+  cursor: pointer;
+}
+
+.input-icon {
+  position: absolute;
+  right: 16px;
+  pointer-events: none;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+/* Flatpickr Premium Overrides */
+.flatpickr-calendar {
+  background: rgba(12, 16, 34, 0.95) !important;
+  border: 1px solid var(--border-accent) !important;
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(124, 58, 237, 0.15) !important;
+  backdrop-filter: blur(24px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 8px !important;
+  font-family: var(--font-primary) !important;
+}
+
+.flatpickr-months .flatpickr-month,
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  color: var(--text-primary) !important;
+  fill: var(--text-primary) !important;
+}
+
+.flatpickr-current-month .numInputWrapper span.arrowUp:after {
+  border-bottom-color: var(--text-secondary) !important;
+}
+
+.flatpickr-current-month .numInputWrapper span.arrowDown:after {
+  border-top-color: var(--text-secondary) !important;
+}
+
+span.flatpickr-weekday {
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+}
+
+.flatpickr-day {
+  color: var(--text-primary) !important;
+  border-radius: var(--radius-sm) !important;
+  transition: var(--transition-base) !important;
+  border: transparent !important;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+  background: rgba(124, 58, 237, 0.2) !important;
+  border-color: transparent !important;
+  color: white !important;
+}
+
+.flatpickr-day.selected {
+  background: var(--accent-primary) !important;
+  color: white !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 10px var(--accent-glow) !important;
+}
+
+.flatpickr-time {
+  border-top: 1px solid var(--border-subtle) !important;
+}
+
+.flatpickr-time input {
+  color: var(--text-primary) !important;
+}
+
+.flatpickr-time .flatpickr-am-pm {
+  color: var(--text-primary) !important;
+}
+
+.flatpickr-time input:hover,
+.flatpickr-time .flatpickr-am-pm:hover,
+.flatpickr-time input:focus,
+.flatpickr-time .flatpickr-am-pm:focus {
+  background: rgba(124, 58, 237, 0.1) !important;
 }
 
 .form-row {
@@ -1518,8 +1611,15 @@ select.form-input {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* カレンダーの予定ありドット */
@@ -1528,7 +1628,7 @@ select.form-input {
 }
 
 .calendar-day--busy {
-  /* 予定あり日の枠線 */
+  border-color: rgba(234, 67, 53, 0.4);
 }
 
 .calendar-busy-dot {
@@ -1549,13 +1649,11 @@ select.form-input {
 
 /* TimeGrid ブロック済みスロット */
 .timegrid-slot--blocked {
-  background: repeating-linear-gradient(
-    -45deg,
-    rgba(234, 67, 53, 0.08),
-    rgba(234, 67, 53, 0.08) 4px,
-    rgba(234, 67, 53, 0.16) 4px,
-    rgba(234, 67, 53, 0.16) 8px
-  ) !important;
+  background: repeating-linear-gradient(-45deg,
+      rgba(234, 67, 53, 0.08),
+      rgba(234, 67, 53, 0.08) 4px,
+      rgba(234, 67, 53, 0.16) 4px,
+      rgba(234, 67, 53, 0.16) 8px) !important;
   cursor: not-allowed !important;
   opacity: 0.7;
   pointer-events: none;
@@ -1569,4 +1667,14 @@ select.form-input {
   align-items: center;
   justify-content: center;
 }
+
+/* Fix for Safari datetime-local inputs */
+input[type="datetime-local"].form-input {
+  cursor: text;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit {
+  display: flex;
+  width: 100%;
+  padding: 0;
 }

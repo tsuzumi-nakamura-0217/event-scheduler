@@ -13,9 +13,9 @@ const DATA_FILE = path.join(__dirname, 'data', 'events.json');
 
 // Google OAuth2 client
 const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    `http://localhost:${PORT}/auth/google/callback`
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  `http://localhost:${PORT}/auth/google/callback`
 );
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
@@ -24,15 +24,15 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(session({
-    secret: process.env.SESSION_SECRET || crypto.randomUUID(),
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: false, // 本番では true に変更
-        maxAge: 24 * 60 * 60 * 1000 // 24時間
-    }
+  secret: process.env.SESSION_SECRET || crypto.randomUUID(),
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: false, // 本番では true に変更
+    maxAge: 24 * 60 * 60 * 1000 // 24時間
+  }
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -61,7 +61,7 @@ function writeData(data) {
 
 // API: Create event
 app.post('/api/events', (req, res) => {
-  const { title, description, dates, timeStart, timeEnd } = req.body;
+  const { title, description, dates, timeStart, timeEnd, deadline } = req.body;
 
   if (!title || !dates || !dates.length) {
     return res.status(400).json({ error: 'タイトルと候補日は必須です' });
@@ -75,6 +75,7 @@ app.post('/api/events', (req, res) => {
     dates: dates.sort(),
     timeStart: timeStart || '09:00',
     timeEnd: timeEnd || '21:00',
+    deadline: deadline || null,
     responses: [],
     createdAt: new Date().toISOString()
   };
@@ -111,6 +112,13 @@ app.post('/api/events/:id/respond', (req, res) => {
 
   if (!event) {
     return res.status(404).json({ error: 'イベントが見つかりません' });
+  }
+
+  if (event.deadline) {
+    const d = new Date(event.deadline);
+    if (d < new Date()) {
+      return res.status(403).json({ error: '回答の締め切りを過ぎています' });
+    }
   }
 
   // Remove existing response from same name
