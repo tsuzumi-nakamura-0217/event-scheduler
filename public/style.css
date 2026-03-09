@@ -407,7 +407,7 @@ body::after {
 .form-input {
   width: 100%;
   padding: 14px 16px;
-  background: var(--bg-input);
+  background-color: var(--bg-input);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   color: var(--text-primary);
@@ -419,12 +419,12 @@ body::after {
 
 .form-input:hover {
   border-color: rgba(255, 255, 255, 0.1);
-  background: var(--bg-input-focus);
+  background-color: var(--bg-input-focus);
 }
 
 .form-input:focus {
   border-color: var(--accent-primary);
-  background: var(--bg-input-focus);
+  background-color: var(--bg-input-focus);
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12), 0 0 20px rgba(124, 58, 237, 0.08);
 }
 

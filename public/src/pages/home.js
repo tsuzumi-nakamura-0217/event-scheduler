@@ -264,6 +264,8 @@ window.HomePage = {
 
       if (res.ok) {
         this.showShareLink(data.id, title, deadline);
+        btn.textContent = 'イベントを作成する';
+        btn.disabled = false;
       } else {
         alert(data.error || 'エラーが発生しました');
         btn.disabled = false;
