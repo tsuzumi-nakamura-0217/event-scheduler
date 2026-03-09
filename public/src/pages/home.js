@@ -263,7 +263,7 @@ window.HomePage = {
       const data = await res.json();
 
       if (res.ok) {
-        this.showShareLink(data.id);
+        this.showShareLink(data.id, title, deadline);
       } else {
         alert(data.error || 'エラーが発生しました');
         btn.disabled = false;
@@ -276,9 +276,26 @@ window.HomePage = {
     }
   },
 
-  showShareLink(eventId) {
+  showShareLink(eventId, title, deadline) {
     const shareUrl = `${window.location.origin}/#/event/${eventId}`;
     const resultsUrl = `${window.location.origin}/#/event/${eventId}/results`;
+
+    let formattedDeadline = '';
+    if (deadline) {
+      const [datePart, timePart] = deadline.split('T');
+      if (datePart && timePart) {
+        const [yyyy, mm, dd] = datePart.split('-');
+        formattedDeadline = `${yyyy}年${mm}月${dd}日 ${timePart}`;
+      } else {
+        formattedDeadline = deadline;
+      }
+    }
+
+    const messageText = `「${title}」の日程調整をお願いします。
+以下のリンクから出欠をご入力ください。
+
+▼ 回答用URL
+${shareUrl}${formattedDeadline ? `\n\n▼ 入力締切日\n${formattedDeadline}` : ''}`;
 
     const shareResult = document.getElementById('share-result');
     shareResult.style.display = 'block';
@@ -295,6 +312,14 @@ window.HomePage = {
           </div>
         </div>
 
+        <div class="mt-lg">
+          <label class="form-label">案内文</label>
+          <div style="position: relative;">
+            <textarea class="form-input" id="share-text" readonly rows="7" style="resize: none;">${messageText}</textarea>
+            <button class="btn btn-primary btn-sm" id="copy-text-btn" type="button" style="position: absolute; right: 10px; bottom: 10px;">コピー</button>
+          </div>
+        </div>
+
         <div class="mt-lg flex-center gap-md" style="flex-wrap: wrap;">
           <a href="#/event/${eventId}" class="btn btn-secondary">回答ページを開く →</a>
           <a href="#/event/${eventId}/results" class="btn btn-secondary">結果を見る →</a>
@@ -307,6 +332,16 @@ window.HomePage = {
       input.select();
       navigator.clipboard.writeText(input.value).then(() => {
         const btn = document.getElementById('copy-share-btn');
+        btn.textContent = 'コピー済み ✓';
+        setTimeout(() => { btn.textContent = 'コピー'; }, 2000);
+      });
+    });
+
+    document.getElementById('copy-text-btn').addEventListener('click', () => {
+      const textarea = document.getElementById('share-text');
+      textarea.select();
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        const btn = document.getElementById('copy-text-btn');
         btn.textContent = 'コピー済み ✓';
         setTimeout(() => { btn.textContent = 'コピー'; }, 2000);
       });
