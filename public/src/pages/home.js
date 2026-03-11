@@ -216,21 +216,27 @@ window.HomePage = {
         })
       });
 
-      const data = await res.json();
+      let data;
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        throw new Error(`サーバーエラー: ${res.status} (Vercelの環境変数 Supabase URL/KEY が未設定の可能性があります)`);
+      }
 
       if (res.ok) {
         this.showShareLink(data.id, title, deadline);
-        btn.textContent = 'イベントを作成する';
-        btn.disabled = false;
       } else {
-        alert(data.error || 'エラーが発生しました');
+        alert(data.error || 'バックエンドでエラーが発生しました');
+      }
+    } catch (err) {
+      const msg = err.message === 'Failed to fetch' ? '通信エラーが発生しました。ネットワーク接続を確認してください。' : err.message;
+      alert(msg);
+    } finally {
+      if (btn.textContent === '作成中...') {
         btn.disabled = false;
         btn.textContent = 'イベントを作成する';
       }
-    } catch (err) {
-      alert('通信エラーが発生しました');
-      btn.disabled = false;
-      btn.textContent = 'イベントを作成する';
     }
   },
 

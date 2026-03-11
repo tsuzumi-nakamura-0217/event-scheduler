@@ -361,18 +361,24 @@ window.RespondPage = {
         body: JSON.stringify({ name, slots: this.selectedSlots, comment })
       });
 
-      const data = await res.json();
+      let data;
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        throw new Error(`サーバーエラー: ${res.status} (Vercelの環境変数未設定か、サーバーがダウンしています)`);
+      }
 
       if (res.ok) {
         // Re-render the whole page with fresh data
         this.render(document.getElementById('app'), eventId);
       } else {
         alert(data.error || 'エラーが発生しました');
-        btn.disabled = false;
-        btn.textContent = originalText;
       }
     } catch (err) {
-      alert('通信エラーが発生しました');
+      const msg = err.message === 'Failed to fetch' ? '通信エラーが発生しました。ネットワーク接続を確認してください。' : err.message;
+      alert(msg);
+    } finally {
       btn.disabled = false;
       btn.textContent = originalText;
     }

@@ -1436,24 +1436,30 @@ select.form-input {
 
 @media (max-width: 768px) {
   .main-content {
-    padding: var(--space-xl) var(--space-md);
+    padding: var(--space-md) var(--space-sm);
   }
 
   .page-title {
     font-size: var(--font-size-2xl);
+    line-height: 1.3;
+  }
+
+  .page-subtitle {
+    font-size: var(--font-size-base);
   }
 
   .card {
-    padding: var(--space-lg);
+    padding: var(--space-md);
   }
 
   .form-row {
     flex-direction: column;
-    gap: 0;
+    gap: var(--space-lg);
+    align-items: stretch;
   }
 
   .steps {
-    padding: var(--space-sm) var(--space-md);
+    padding: var(--space-sm) 0;
     gap: 0;
   }
 
@@ -1469,12 +1475,34 @@ select.form-input {
     gap: 2px;
   }
 
+  .calendar-day {
+    font-size: var(--font-size-xs);
+  }
+
   .results-stats {
     grid-template-columns: 1fr;
+    gap: var(--space-sm);
   }
 
   .header-nav {
     padding: var(--space-sm) var(--space-md);
+  }
+
+  .timegrid-slot, .heatmap-slot {
+    min-width: 44px;
+    height: 32px;
+  }
+
+  .best-slot-badge {
+    padding: 8px 12px;
+    font-size: var(--font-size-xs);
+    white-space: normal;
+    word-break: break-all;
+  }
+
+  .btn-lg {
+    padding: 14px 20px;
+    font-size: var(--font-size-sm);
   }
 }
 
