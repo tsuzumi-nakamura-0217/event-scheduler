@@ -17,6 +17,14 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Guard: Supabase が未初期化なら全 API を 503 で返す
+app.use('/api', (req, res, next) => {
+  if (!supabase) {
+    return res.status(503).json({ error: 'データベースに接続できません。環境変数 SUPABASE_URL / SUPABASE_ANON_KEY を確認してください。' });
+  }
+  next();
+});
+
 // Helper: build event object from DB rows (matching original API shape)
 function buildEvent(row, responses) {
   return {

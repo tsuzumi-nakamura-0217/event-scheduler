@@ -202,19 +202,28 @@ window.HomePage = {
     const timeEnd = document.getElementById('time-end').value;
     const deadline = document.getElementById('event-deadline').value;
 
+    const fetchOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        description,
+        dates: this.selectedDates,
+        timeStart,
+        timeEnd,
+        deadline
+      })
+    };
+
     try {
-      const res = await fetch('/api/events', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title,
-          description,
-          dates: this.selectedDates,
-          timeStart,
-          timeEnd,
-          deadline
-        })
-      });
+      let res;
+      try {
+        res = await fetch('/api/events', fetchOptions);
+      } catch (_) {
+        // ネットワークエラー時に1回だけリトライ（モバイル回線・コールドスタート対策）
+        await new Promise(r => setTimeout(r, 1500));
+        res = await fetch('/api/events', fetchOptions);
+      }
 
       let data;
       const contentType = res.headers.get("content-type");
@@ -230,11 +239,8 @@ window.HomePage = {
         alert(data.error || 'バックエンドでエラーが発生しました');
       }
     } catch (err) {
-      if (err.message === 'Failed to fetch') {
-        const payloadDebug = JSON.stringify({
-          title, dates: this.selectedDates, timeStart, timeEnd, deadline
-        });
-        alert(`通信エラー(Failed to fetch)が発生しました。\nURL: ${window.location.href}\nPayload: ${payloadDebug}`);
+      if (err.message === 'Failed to fetch' || err.message === 'Load failed') {
+        alert('通信エラーが発生しました。ネットワーク接続を確認して再度お試しください。');
       } else {
         alert(err.message);
       }
