@@ -17,6 +17,11 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Health check: デプロイされたコードのバージョン確認用
+app.get('/api/health', (req, res) => {
+  res.json({ version: '2.0.0', supabaseReady: !!supabase, timestamp: new Date().toISOString() });
+});
+
 // Guard: Supabase が未初期化なら全 API を 503 で返す
 app.use('/api', (req, res, next) => {
   if (!supabase) {
