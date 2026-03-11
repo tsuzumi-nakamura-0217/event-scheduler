@@ -117,9 +117,12 @@ class Calendar {
         this.container.querySelector('#cal-next').addEventListener('click', () => this.nextMonth());
 
         this.container.querySelectorAll('.calendar-day:not(.calendar-day--empty):not(.calendar-day--disabled)').forEach(el => {
-            el.addEventListener('click', () => {
+            const handleInteract = (e) => {
+                e.preventDefault(); // Prevent double-firing on touch devices
                 this.toggleDate(el.dataset.date);
-            });
+            };
+            el.addEventListener('click', handleInteract);
+            el.addEventListener('touchstart', handleInteract, { passive: false });
         });
     }
 }

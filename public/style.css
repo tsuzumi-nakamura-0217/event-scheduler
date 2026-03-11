@@ -657,6 +657,7 @@ select.form-input {
   border: 1px solid transparent;
   position: relative;
   user-select: none;
+  touch-action: manipulation;
 }
 
 .calendar-day:hover:not(.calendar-day--empty):not(.calendar-day--disabled) {

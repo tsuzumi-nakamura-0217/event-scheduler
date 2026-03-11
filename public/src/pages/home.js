@@ -112,7 +112,7 @@ window.HomePage = {
         locale: "ja",
         minDate: "today",
         time_24hr: true,
-        disableMobile: true,
+        disableMobile: false, // Allow native mobile date pickers for better UX on smartphones
         onReady: function (selectedDates, dateStr, instance) {
           const limitLength = (e) => {
             if (e.target.value.length > 2) {
