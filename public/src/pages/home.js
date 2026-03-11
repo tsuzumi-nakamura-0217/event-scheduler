@@ -230,8 +230,14 @@ window.HomePage = {
         alert(data.error || 'バックエンドでエラーが発生しました');
       }
     } catch (err) {
-      const msg = err.message === 'Failed to fetch' ? '通信エラーが発生しました。ネットワーク接続を確認してください。' : err.message;
-      alert(msg);
+      if (err.message === 'Failed to fetch') {
+        const payloadDebug = JSON.stringify({
+          title, dates: this.selectedDates, timeStart, timeEnd, deadline
+        });
+        alert(`通信エラー(Failed to fetch)が発生しました。\nURL: ${window.location.href}\nPayload: ${payloadDebug}`);
+      } else {
+        alert(err.message);
+      }
     } finally {
       if (btn.textContent === '作成中...') {
         btn.disabled = false;
